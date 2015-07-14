@@ -1,6 +1,3 @@
-## tiagodeoliveira
-**Globo.com: coding challenge**
-
 ====================
 #### Considerações Gerais
 Você deverá usar este repositório como o repo principal do projeto, i.e.,
