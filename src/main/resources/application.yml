@@ -1,0 +1,6 @@
+spring:
+    thymeleaf.cache: true
+server:
+    port: 8080
+    tomcat:
+        compression: on

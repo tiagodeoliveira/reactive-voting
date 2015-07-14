@@ -1,0 +1,97 @@
+buildscript {
+    ext {
+        springBootVersion = '1.2.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath("io.spring.gradle:dependency-management-plugin:0.5.1.RELEASE")
+        classpath 'net.eikehirsch.react:gradle-react-plugin:0.3.1'
+    }
+}
+
+plugins {
+    id 'org.hidetake.ssh' version '1.1.2'
+}
+
+group 'io.tiagodeoliveira'
+version '1.1-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.4'
+  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+apply plugin: 'groovy'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'net.eikehirsch.react'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.4.0'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    compile "io.projectreactor:reactor-bus:2.0.2.RELEASE"
+
+    runtime 'org.hsqldb:hsqldb'
+    runtime 'org.webjars:jquery:2.1.4'
+    runtime 'org.webjars:bootstrap:3.3.4'
+
+    testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
+    testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+}
+
+task jsxCompile( type: JSXTask ) {
+    sourcesDir = 'src/main/react/'
+    destDir = "$buildDir/resources/main/static/react"
+}
+
+node {
+    version = '0.11.10'
+    npmVersion = '2.1.5'
+    distBaseUrl = 'http://nodejs.org/dist'
+    download = true
+    workDir = file("${project.buildDir}/nodejs")
+}
+
+task deploy(dependsOn: distTar) << {
+    def fileToDeploy = "${buildDir}/distributions/tiagodeoliveira-${version}.tar"
+
+    def tree = fileTree(dir: 'deploy-targets')
+    tree.include '**/*.pem'
+
+    tree.each { File file ->
+
+        def userName = file.name.split('-')[0]
+        def host = file.name.split('-')[1].replace('.pem', '')
+        def connection = [host: host, identity: file, user: userName]
+        def destDir = "/home/${userName}/"
+
+        def distName = "tiagodeoliveira-${version}"
+        ssh.run {
+            session(connection) {
+                put from: fileToDeploy, into: destDir
+                execute "tar -xvf ${distName}.tar"
+                execute "kill `ps aux | grep tiagodeoliveira | grep -v grep | awk '{ print \$2 }'`",  ignoreError: true
+                executeBackground "nohup ${destDir}/${distName}/bin/tiagodeoliveira > out.log 2>&1 &"
+            }
+        }
+    }
+}
+
+processResources.dependsOn jsxCompile
