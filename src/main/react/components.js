@@ -156,9 +156,9 @@ var CountdownTimer = React.createClass({
     var daysLeftStr = '';
     if (days > 0) {
       if (days == 1) {
-        daysLeftStr = days + " DIA ";
+        daysLeftStr = days + " DAY ";
       } else {
-        daysLeftStr = days + " DIAS ";
+        daysLeftStr = days + " DAYS ";
       }
     }
     return daysLeftStr;
@@ -202,10 +202,9 @@ var CountdownTimer = React.createClass({
     }
     return (
       <div className="time-left">
-        <p>FALTAM</p>
+        <p>VOTING ENDS IN</p>
         {daysElement}
         <p><span className="hours-left">{this.hoursLeft()}</span></p>
-        <p>PARA ENCERRAR A VOTAÇÃO</p>
       </div>
     );
   }
