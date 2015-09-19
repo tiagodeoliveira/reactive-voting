@@ -8,7 +8,7 @@ var VotingScreen = React.createClass({
   },
   render: function() {
     this.props.buttonDisabled = true;
-    this.props.participants = [{id: 1, name: 'Maria', phone: '0800-900-341', la: '3001'}, {id: 2, name: 'Pedro', phone: '0800-900-342', la: '3002'}]
+    this.props.participants = [{id: 1, name: 'Janet', phone: '0800-900-341', la: '3001'}, {id: 2, name: 'Petter', phone: '0800-900-342', la: '3002'}]
     return (
       <div>
         <div className="row row-centered">
@@ -21,7 +21,7 @@ var VotingScreen = React.createClass({
         <div className="row">
           <div className="col-xs-12">
             <div className="footer text-center" id="footer">
-              <VoteComponent buttonText="Envie seu voto!" info={this.state}/>
+              <VoteComponent buttonText="Vote!" info={this.state}/>
             </div>
           </div>
         </div>

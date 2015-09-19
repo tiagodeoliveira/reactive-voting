@@ -70,7 +70,7 @@ node {
 }
 
 task deploy(dependsOn: distTar) << {
-    def fileToDeploy = "${buildDir}/distributions/tiagodeoliveira-${version}.tar"
+    def fileToDeploy = "${buildDir}/distributions/${project.name}-${version}.tar"
 
     def tree = fileTree(dir: 'deploy-targets')
     tree.include '**/*.pem'
@@ -82,13 +82,13 @@ task deploy(dependsOn: distTar) << {
         def connection = [host: host, identity: file, user: userName]
         def destDir = "/home/${userName}/"
 
-        def distName = "tiagodeoliveira-${version}"
+        def distName = "${project.name}-${version}"
         ssh.run {
             session(connection) {
                 put from: fileToDeploy, into: destDir
                 execute "tar -xvf ${distName}.tar"
-                execute "kill `ps aux | grep tiagodeoliveira | grep -v grep | awk '{ print \$2 }'`",  ignoreError: true
-                executeBackground "nohup ${destDir}/${distName}/bin/tiagodeoliveira > out.log 2>&1 &"
+                execute "kill `ps aux | grep ${project.name} | grep -v grep | awk '{ print \$2 }'`",  ignoreError: true
+                executeBackground "nohup ${destDir}/${distName}/bin/${project.name} > out.log 2>&1 &"
             }
         }
     }

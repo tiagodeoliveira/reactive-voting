@@ -25,7 +25,7 @@ var SuccessMessageComponent = React.createClass({
   render: function() {
     return (
       <div className="alert alert-success" role="alert">
-        <strong>Parabéns!</strong> Seu voto para <strong>{this.props.message}</strong> foi efetuado com sucesso!
+        <strong>Congrats!</strong> Your vote to fire <strong>{this.props.message}</strong> was sent sucessfully!
       </div>
     );
   }
@@ -40,7 +40,7 @@ var CaptchaComponent = React.createClass({
     React.render(<SuccessMessageComponent message={this.props.selectedName}/>, document.getElementById('message_container'));
   },
   onCaptchaSuccess: function(captchaKey) {
-    React.render(<SpinnerComponent message="Enviando seu voto..."/>, document.getElementById('footer'));
+    React.render(<SpinnerComponent message="Sending your vote..."/>, document.getElementById('footer'));
     var self = this;
     var jsonData = JSON.stringify({ "captcha": captchaKey, "participant": self.props.selectedParticipant });
     var uri = '/vote/';
@@ -106,7 +106,7 @@ var ParticipantPicture = React.createClass({
 var ParticipantText = React.createClass({
   render: function() {
     return (
-      <p>Para eliminar <strong>{this.props.participantName}</strong> pelo telefone disque <strong>{this.props.participantPhone}</strong> ou mande um SMS para <strong>{this.props.participantLA}</strong></p>
+      <p>To fire <strong>{this.props.participantName}</strong> call <strong>{this.props.participantPhone}</strong> or send a SMS to <strong>{this.props.participantLA}</strong></p>
     )
   }
 });
